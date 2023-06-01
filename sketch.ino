@@ -24,6 +24,7 @@ Adafruit_MPU6050 mpu;
 AsyncMqttClient mqttClient;
 TimerHandle_t mqttReconnectTimer;
 TimerHandle_t wifiReconnectTimer;
+//topics unter denen werte veröffentlicht werden
 const char topic2[]="YAchse";
 const char  topic[]="XAchse";
 void connectToWifi()
@@ -42,10 +43,6 @@ void onMqttConnect(bool sessionPresent)
 
 }
 
-
-
-
-
 void onMqttMessage(char* topic, char* payload, const AsyncMqttClientMessageProperties& properties,
                    const size_t& len, const size_t& index, const size_t& total)
 {
@@ -57,19 +54,20 @@ void onMqttPublish(const uint16_t& packetId)
 {
   Serial.println("Publish acknowledged.");
 }
-
+//integer um die werte des accelerometer aufzunehmen
 int xAchse=0;
 int yAchse=0;
-int zAchse=0;
+
 
 void setup() {
  Serial.begin(115200);
 
-  while (!Serial && millis() < 5000);
+ // while (!Serial && millis() < 5000);
 
    delay(10);
 
   Serial.print("\nStarting FullyFeature_ESP32 on ");
+  //Verbindung mit wifi
     WiFi.begin(WIFI_SSID);
  // Serial.println(ARDUINO_BOARD);
 //  Serial.println(ASYNC_MQTT_ESP32_VERSION);
@@ -80,19 +78,13 @@ void setup() {
                                     reinterpret_cast<TimerCallbackFunction_t>(connectToWifi));
 */
   //WiFi.onEvent(WiFiEvent);
+  //Server einstellungen werden gesetzt und dann mqtt verbunden
    mqttClient.setServer(MQTT_HOST, MQTT_PORT);
  mqttClient.connect();
   mqttClient.onConnect(onMqttConnect);
-  //mqttClient.onDisconnect(onMqttDisconnect);
-  //mqttClient.onSubscribe(onMqttSubscribe);
-  //mqttClient.onUnsubscribe(onMqttUnsubscribe);
   mqttClient.onMessage(onMqttMessage);
   mqttClient.onPublish(onMqttPublish);
-
- 
-
-  //connectToWifi();
-
+//Accellerometer wird verbunden und erfolgreiche verbindung ausgegeben
     if (!mpu.begin()) {
     Serial.println("Failed to find MPU6050 chip");
     while (1) {
@@ -105,20 +97,23 @@ void setup() {
 }
 
 void loop() {
- /// mqttClient.poll();
+//Variablen, die die Sensorbaten aufnehmen
   sensors_event_t a, g, temp;
   mpu.getEvent(&a, &g, &temp);
-
+//Einlesen der Daten und paren in string
 xAchse=a.acceleration.x;
 yAchse=a.acceleration.y;
 char XString[8];
 char YString[8];
 dtostrf(xAchse,1,2,XString);
 dtostrf(yAchse,1,2,YString);
+//Werte ausgeben
   Serial.println("Acceleration X: ");
   Serial.print(a.acceleration.x);
   Serial.print(", Y: ");
   Serial.print(a.acceleration.y);
+
+  //Publishen der werte über mqtt
     mqttClient.publish(topic,0,true,XString);
     mqttClient.publish(topic2,0,true,YString);
   mqttClient.onPublish(onMqttPublish);
