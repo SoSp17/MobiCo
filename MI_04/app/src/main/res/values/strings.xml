@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">MI_04</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="start_button">Start</string>
+    <string name="options_menue">Optionen</string>
+    <string name="end_menue">Beenden</string>
+    <string name="Auswahl_Label">Accelerometer oder MQTT Daten Verwenden?</string>
+    <string name="IP_Label">IP-Adresse angeben:</string>
+    <string name="IP_Hint">255.255.255.255</string>
+    <string name="Confirmation_button">Auswahl Bestätigen</string>
+    <string name="accelerometer">Accelerometer</string>
+    <string name="mqtt">MQTT</string>
+    <string name="Sound">Sound</string>
+    <string name="sound">Sound</string>
+    <string name="off">OFF</string>
+    <string name="on">ON</string>
+</resources>
