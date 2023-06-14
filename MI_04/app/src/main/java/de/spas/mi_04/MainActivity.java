@@ -37,9 +37,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public MainActivity() {
     }
-String sound;
+
     final String prefs = "pref";
     public SharedPreferences Options;
+        String soundOn="ON";
+        String soundOff="OFF";
+        boolean sound;
     /**
      *
      */
@@ -60,7 +63,7 @@ String sound;
 diameter=cellSize/3;
         mediaPlayer = MediaPlayer.create(this, R.raw.diggy_hole); // Musikdatei aus dem res/raw-Ordner laden
         Options  = this.getSharedPreferences(prefs, Context.MODE_PRIVATE);
-        sound=Options.getString(sound, "ON");
+        sound=Options.getBoolean(soundOn, false);
     }
 
 
@@ -73,7 +76,7 @@ diameter=cellSize/3;
     protected void onResume() {
         super.onResume();
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        if(sound=="ON") startMusic();
+        if(sound) startMusic();
     }
 
     @Override
@@ -299,7 +302,7 @@ diameter=cellSize/3;
         @Override
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
-if(sound=="ON") startMusic();
+  if(sound) startMusic();
             int width = getWidth();
             int height = getHeight();
           //  int cellSize = Math.min(width, height) / labyrinth.length;
@@ -310,10 +313,7 @@ if(sound=="ON") startMusic();
                     int y = (int) (i * cellSize);
 
                     if (labyrinth[i][j] == 1) {
-                        canvas.drawLine(x, y, x + cellSize, y, paint);
-                        canvas.drawLine(x, y, x, y + cellSize, paint);
-                        canvas.drawLine(x + cellSize, y, x + cellSize, y + cellSize, paint);
-                        canvas.drawLine(x, y + cellSize, x + cellSize, y + cellSize, paint);
+   canvas.drawRect(x,y,x+cellSize,y+cellSize,paint);
                     }
 
                 }
